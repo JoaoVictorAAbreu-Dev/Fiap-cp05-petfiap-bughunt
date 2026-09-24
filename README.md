@@ -123,3 +123,7 @@ Requer JDK 17 ou superior e Maven. Na raiz do projeto, execute `mvn test`; a su�
 O `application.properties` mantém `SEU_RM` e `SUA_SENHA` conforme recebido. Para subir a API com Oracle, configure suas próprias credenciais apenas localmente e não as publique. Também é possível usar o bloco H2 comentado no arquivo para testes manuais. Nesta entrega, a API foi iniciada com H2 em memória por variáveis de ambiente, sem modificar o arquivo: POST criou `id: 1`, GET `/1/resumo` devolveu preço e duração corretos; conflito, data passada, ID inexistente e cancelamento de concluído retornaram 409, 400, 404 e 409, respectivamente.
 
 O grupo deve enviar o link público deste repositório no Teams.
+
+## Limitações verificadas
+
+O fluxo HTTP foi validado com H2 em memória; não foram usadas credenciais nem conexão com o Oracle da FIAP. A checagem de conflito em `AgendaService` consulta a agenda antes de salvar, mas não possui uma garantia transacional ou restrição de banco para duas requisições simultâneas do mesmo pet e horário. Os testes do checkpoint cobrem chamadas sequenciais; o tratamento de concorrência entre transações e instâncias da API exigiria desenho adicional de persistência.
