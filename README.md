@@ -2,7 +2,7 @@
 
 ## Identificação
 
-**Grupo:** João Victor e Rodrigo  
+**Grupo:** Clube das Winx
 **Turma:** 2CCPH
 
 | Integrante | RM | Turma |
