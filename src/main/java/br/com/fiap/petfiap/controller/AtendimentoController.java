@@ -28,7 +28,7 @@ public class AtendimentoController {
     // POST /api/atendimentos?tutorNome=Ana - Agendar atendimento
     // Ex.: POST "/api/atendimentos?tipo=BANHO&petNome=Rex&porte=PEQUENO&tutorNome=Ana&dataHora=2026-10-01T10:00"
     @PostMapping
-    public ResponseEntity<Atendimento> agendar(
+    public ResponseEntity<?> agendar(
             @RequestParam String tipo,
             @RequestParam String petNome,
             @RequestParam String porte,
@@ -44,19 +44,19 @@ public class AtendimentoController {
                     .construir(protocolo);
             return ResponseEntity.status(201).body(service.agendar(atendimento));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
         } catch (HorarioOcupadoException e) {
-            return ResponseEntity.status(409).build();
+            return ResponseEntity.status(409).body(Map.of("erro", e.getMessage()));
         }
     }
 
     // GET /api/atendimentos/{id} - Buscar por id
     @GetMapping("/{id}")
-    public ResponseEntity<Atendimento> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(service.buscarPorId(id));
         } catch (AtendimentoNaoEncontradoException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(Map.of("erro", e.getMessage()));
         }
     }
 
@@ -68,7 +68,7 @@ public class AtendimentoController {
 
     // GET /api/atendimentos/{id}/resumo - Preco, pontos e duracao (polimorfismo na pratica)
     @GetMapping("/{id}/resumo")
-    public ResponseEntity<Map<String, Object>> resumo(@PathVariable Long id) {
+    public ResponseEntity<?> resumo(@PathVariable Long id) {
         try {
             Atendimento atendimento = service.buscarPorId(id);
             return ResponseEntity.ok(Map.of(
@@ -77,31 +77,31 @@ public class AtendimentoController {
                     "pontosFidelidade", atendimento.calcularPontosFidelidade(),
                     "duracaoMinutos", atendimento.getDuracaoMinutos()));
         } catch (AtendimentoNaoEncontradoException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(Map.of("erro", e.getMessage()));
         }
     }
 
     // POST /api/atendimentos/{id}/conclusao - Concluir atendimento
     @PostMapping("/{id}/conclusao")
-    public ResponseEntity<Atendimento> concluir(@PathVariable Long id) {
+    public ResponseEntity<?> concluir(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(service.concluir(id));
         } catch (AtendimentoNaoEncontradoException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(Map.of("erro", e.getMessage()));
         } catch (StatusInvalidoException e) {
-            return ResponseEntity.status(409).build();
+            return ResponseEntity.status(409).body(Map.of("erro", e.getMessage()));
         }
     }
 
     // POST /api/atendimentos/{id}/cancelamento - Cancelar atendimento
     @PostMapping("/{id}/cancelamento")
-    public ResponseEntity<Atendimento> cancelar(@PathVariable Long id) {
+    public ResponseEntity<?> cancelar(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(service.cancelar(id));
         } catch (AtendimentoNaoEncontradoException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(Map.of("erro", e.getMessage()));
         } catch (StatusInvalidoException e) {
-            return ResponseEntity.status(409).build();
+            return ResponseEntity.status(409).body(Map.of("erro", e.getMessage()));
         }
     }
 
